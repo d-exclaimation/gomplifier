@@ -13,26 +13,26 @@ I'm using the regular http library for Go that can take POST Request and parse i
 
 ```go
 // Setup HTTP Server for receiving requests from LINE platform
-	http.HandleFunc("/<LINE-API-Endpoints>", func(w http.ResponseWriter, req *http.Request) {
-		var events, err = bot.ParseRequest(req)
-		if err != nil {
-			if err == linebot.ErrInvalidSignature {
-				w.WriteHeader(400)
-			} else {
-				w.WriteHeader(500)
-			}
-			return
+http.HandleFunc("/<LINE-API-Endpoints>", func(w http.ResponseWriter, req *http.Request) {
+	var events, err = bot.ParseRequest(req)
+	if err != nil {
+		if err == linebot.ErrInvalidSignature {
+			w.WriteHeader(400)
+		} else {
+			w.WriteHeader(500)
 		}
-		for _, event := range events {
-			// Only check for EventTypeMessage
-			if event.Type == linebot.EventTypeMessage {
-				switch message := event.Message.(type) {
-				case *linebot.TextMessage:
-                    // Do Something
-				}
+		return
+	}
+	for _, event := range events {
+		// Only check for EventTypeMessage
+		if event.Type == linebot.EventTypeMessage {
+			switch message := event.Message.(type) {
+			case *linebot.TextMessage:
+	    // Do Something
 			}
 		}
-	})
+	}
+})
 ```
 
 ## Bot functionalities
@@ -62,7 +62,7 @@ func All() map[string]Executable {
 
 ### Connecting to other bots
 
-`No info here`
+`No info here yet, I am keeping this for myself atm sorry :)`
 
 
 ### LINE Flex Message UI 
@@ -91,3 +91,7 @@ func MiniBubbleCard(hexColor string, head []FlexComponent, body []FlexComponent)
 }
 
 ```
+
+Hopefully, this part of code will live as its own libraries which I will link here:
+#### Flex UI Go Library
+[`not yet`](https://github.com/d-exclaimation/golang-linebot/)
