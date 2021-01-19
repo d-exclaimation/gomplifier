@@ -152,9 +152,9 @@ func fillGrid(width int, height int, player Vector2, targets []Vector2, items []
 			if player.Equal(coords) {
 				row = append(row, fox)
 			} else if IsIn(items, coords) {
-				row = append(row, target)
-			} else if IsIn(targets, coords) {
 				row = append(row, bomb)
+			} else if IsIn(targets, coords) {
+				row = append(row, target)
 			} else {
 				row = append(row, empty)
 			}
