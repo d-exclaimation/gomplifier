@@ -1,6 +1,7 @@
 package games
 
 import (
+	"fmt"
 	"math/rand"
 )
 
@@ -68,6 +69,7 @@ func (game *Sokoban) Move(direction string) {
 	}
 
 	var forecast = game.player.ApplyMovement(DirectionKeyCode[direction])
+	fmt.Println(fmt.Sprintf("%d, %d", forecast.x, forecast.y))
 
 	// Boundaries
 	if forecast.y < 0 || forecast.y > len(game.state)-1 {
@@ -80,8 +82,16 @@ func (game *Sokoban) Move(direction string) {
 	// Check next item in the forecast
 	var nextSpot = game.state[forecast.y][forecast.x]
 
-	if nextSpot == dead || nextSpot == target || (nextSpot == bomb && !game.MoveObject(forecast, direction)){
+	// Not stack on top finished target
+	if nextSpot == dead || nextSpot == target {
 		return
+	}
+
+	if nextSpot == bomb {
+		var next = game.MoveObject(forecast, direction)
+		if !next {
+			return
+		}
 	}
 
 	// Switch the new location with the previous, basically move the character
@@ -96,7 +106,7 @@ func (game *Sokoban) Move(direction string) {
 }
 
 func (game *Sokoban) MoveObject(location Vector2, direction string) bool {
-	var forecast = game.player.ApplyMovement(DirectionKeyCode[direction])
+	var forecast = location.ApplyMovement(DirectionKeyCode[direction])
 
 	// Boundaries
 	if forecast.y < 0 || forecast.y > len(game.state)-1 {
@@ -111,10 +121,17 @@ func (game *Sokoban) MoveObject(location Vector2, direction string) bool {
 		nextSpot = game.state[forecast.y][forecast.x]
 		object = bomb
 	)
-
-	// Not stack on top finished target, or recurse
-	if nextSpot == dead || (nextSpot == bomb && !game.MoveObject(forecast, direction)) {
+	fmt.Println(fmt.Sprintf("%d, %d", forecast.x, forecast.y))
+	// Not stack on top finished target
+	if nextSpot == dead {
 		return false
+	}
+
+	if nextSpot == bomb {
+		var next = game.MoveObject(forecast, direction)
+		if !next {
+			return false
+		}
 	}
 
 	if nextSpot == target {
