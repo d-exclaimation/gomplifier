@@ -1,10 +1,11 @@
 package commands
 
 import (
-	"github.com/line/line-bot-sdk-go/linebot"
 	"log"
 	"math/rand"
 	"strings"
+
+	"github.com/line/line-bot-sdk-go/linebot"
 )
 
 func Memes(bot *linebot.Client, event *linebot.Event, message string) {
@@ -12,9 +13,9 @@ func Memes(bot *linebot.Client, event *linebot.Event, message string) {
 
 	// Image dictionaries
 	var images = map[string]string{
-		"https://i.imgur.com/lfUAvZw.png": "https://i.imgur.com/KgfNw0E.png",
-		"https://i.imgur.com/euvFB6k.jpg": "https://i.imgur.com/euvFB6k.jpg",
-		"https://i.imgur.com/f6pPlXJ.jpg": "https://i.imgur.com/f6pPlXJ.jpg",
+		"<image-link-1>": "<thumbnail-link-1>",
+		"<image-link-2>": "<thumbnail-link-2>",
+		"<image-link-3>": "<thumbnail-link-3>",
 	}
 
 	// Get the link to an image
