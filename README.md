@@ -1,4 +1,4 @@
-# golang-linebot
+# gomplifier
  A bot for LINE Messanging API
 
 ## Overview
