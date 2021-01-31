@@ -1,12 +1,12 @@
 package commands
 
 import (
+	. "github.com/d-exclaimation/lineapi/bot-impl"
 	"github.com/line/line-bot-sdk-go/linebot"
-	"log"
 	"math/rand"
 )
 
-func Fortune(bot *linebot.Client, event *linebot.Event, message string) {
+func Fortune(bot *linebot.Client, event *linebot.Event, _ string) {
 	var yesResponds = []string{"the oracle said yes", "God himself told me yes", "yes", "it's probably yes", "yes"}
 	var noResponds = []string{"the oracle said no", "God said no", "No", "Probably no", "nope"}
 
@@ -21,7 +21,5 @@ func Fortune(bot *linebot.Client, event *linebot.Event, message string) {
 		reply = noResponds[respond]
 	}
 
-	if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(reply)).Do(); err != nil {
-		log.Print(err)
-	}
+	Send(bot, event, linebot.NewTextMessage(reply))
 }

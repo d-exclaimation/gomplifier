@@ -1,3 +1,11 @@
+//
+//  game.go
+//  main
+//
+//  Created by d-exclaimation on 5:08 PM.
+//  Copyright © 2020 d-exclaimation. All rights reserved.
+//
+
 package games
 
 import (
@@ -10,7 +18,7 @@ var (
 	target = "🐍"
 	bomb   = "💣"
 	dead   = "🔥"
-	empty  = "➖"
+	empty  = "⬜️"
 )
 
 // Sokoban Structure
@@ -154,6 +162,21 @@ func (game *Sokoban) MoveObject(location Vector2, direction string) bool {
 
 func (game *Sokoban) Show() string {
 	return show(game.state, game.IsWin)
+}
+
+func (game *Sokoban) ShowParts() ([][]string, string, string, bool) {
+	var (
+		colors = []string{"#b7efff", "#d9d1ff", "#ffb1b1" , "#fed0a8", "#fff1aa"}
+		index = rand.Intn(len(colors))
+		footer = "To move, send W A S D"
+		hex = colors[index]
+	)
+	// Add footer to explain available commands
+	if game.IsWin {
+		hex = "#dafe83"
+		footer = "restart call command (!start)"
+	}
+	return game.state, hex, footer, game.IsWin
 }
 
 // Helper function

@@ -1,9 +1,9 @@
 package commands
 
 import (
+	. "github.com/d-exclaimation/lineapi/bot-impl"
 	"github.com/d-exclaimation/lineapi/components"
 	"github.com/line/line-bot-sdk-go/linebot"
-	"log"
 	"strings"
 	"time"
 )
@@ -18,9 +18,7 @@ func AddTodo(bot *linebot.Client, event *linebot.Event, message string) {
 	// If there are no other arguments, exit early and send an error message
 	if len(params) < 2 {
 		var errorMsg = linebot.NewTextMessage("Sorry, but there isn't enough arguments")
-		if _, err := bot.ReplyMessage(event.ReplyToken, errorMsg).Do(); err != nil {
-			log.Print(err)
-		}
+		Send(bot, event, errorMsg)
 		return
 	}
 
@@ -41,7 +39,5 @@ func ShowTodo(bot *linebot.Client, event *linebot.Event, message string) {
 		res = linebot.NewFlexMessage("Update your app lol", container)
 	)
 
-	if _, err := bot.ReplyMessage(event.ReplyToken, res).Do(); err != nil {
-		log.Print(err)
-	}
+	Send(bot, event, res)
 }

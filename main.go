@@ -1,3 +1,11 @@
+//
+//  main.go
+//  main
+//
+//  Created by d-exclaimation on 5:08 PM.
+//  Copyright © 2020 d-exclaimation. All rights reserved.
+//
+
 package main
 
 import (
@@ -7,6 +15,7 @@ import (
 	"os"
 	"strings"
 
+	. "github.com/d-exclaimation/lineapi/bot-impl"
 	"github.com/d-exclaimation/lineapi/commands"
 	arcade "github.com/d-exclaimation/lineapi/games"
 
@@ -14,6 +23,12 @@ import (
 )
 
 var prefix = "!"
+
+type HubMessage struct {
+	Author string
+	Msg    string
+	Key    string
+}
 
 func main() {
 
@@ -29,7 +44,7 @@ func main() {
 	var games = make(map[string]*arcade.Sokoban)
 
 	// Setup HTTP Server for receiving requests from LINE platform
-	http.HandleFunc("/<LINE-API-Endpoints>", func(w http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/callback", func(w http.ResponseWriter, req *http.Request) {
 		var events, err = bot.ParseRequest(req)
 		if err != nil {
 			if err == linebot.ErrInvalidSignature {
@@ -52,7 +67,6 @@ func main() {
 						id = event.Source.UserID
 					case "group":
 						id = event.Source.GroupID
-						saved = event.Source.GroupID
 					case "room":
 						id = event.Source.RoomID
 					}
@@ -62,9 +76,6 @@ func main() {
 				}
 			}
 		}
-	})
-	http.HandleFunc("/<other-endpoints>", func(writer http.ResponseWriter, request *http.Request) {
-		// Connecting to other bots
 	})
 
 	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
@@ -80,8 +91,7 @@ func actions(bot *linebot.Client, event *linebot.Event, message string, games ma
 
 	// If the message sent is a movement {w, a, s, d} then try to play the game, if game exist
 	if isWASD(message) && ok {
-		games[id].Move(message)
-		sendMessage(bot, event, games[id].Show())
+		arcade.MoveGame(bot, event, message, games, id)
 		return
 	}
 
@@ -91,20 +101,13 @@ func actions(bot *linebot.Client, event *linebot.Event, message string, games ma
 	}
 
 	// Special cases
-	if strings.HasSuffix(message, "start") {
-		games[id] = arcade.NewSokoban(10, 5)
-		sendMessage(bot, event, games[id].Show())
-		return
-	}
-
-	if strings.HasPrefix(message, "!announce") {
-		announce(bot, event, message)
+	if strings.HasPrefix(message, "!start") {
+		arcade.NewGame(bot, event, games, id)
 		return
 	}
 
 	// Get the command itself without any parameter
 	var name = strings.Split(message, " ")[0]
-	fmt.Println(name)
 
 	// Get the appropriate functions hashmaps from command directory
 	var commandMap = commands.All()
@@ -113,16 +116,6 @@ func actions(bot *linebot.Client, event *linebot.Event, message string, games ma
 		// Execute the function given the required parameters
 		commandMap[name](bot, event, message)
 	}
-}
-
-func sendMessage(bot *linebot.Client, event *linebot.Event, message string) {
-	if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message)).Do(); err != nil {
-		log.Print(err)
-	}
-}
-
-func announce(bot *linebot.Client, event *linebot.Event, message string) {
-	// Announce to other bots
 }
 
 func isWASD(msg string) bool {
